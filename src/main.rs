@@ -1,5 +1,6 @@
 #![feature(iter_arith)]
 #![feature(step_by)]
+#![feature(inclusive_range, inclusive_range_syntax)]
 
 mod problem1 {
     // Find multiples of three and five and sum them
@@ -112,8 +113,8 @@ mod problem4 {
 
     fn palimdrome_factors(min: u64, max: u64) -> Vec<(u64, u64)> {
         let mut v = Vec::new();
-        for a in min..max {
-            for b in a..max {
+        for a in min...max {
+            for b in a...max {
                 let result = a * b;
                 if is_palimdrome_number(result) {
                     v.push((a, b));
@@ -123,8 +124,8 @@ mod problem4 {
         return v;
     }
 
-    pub fn solve() -> u64 {
-        let factors = palimdrome_factors(100, 1000);
+    pub fn solve(min: u64, max: u64) -> u64 {
+        let factors = palimdrome_factors(min, max);
         let results = factors.into_iter().map(|(a, b)| a * b);
         return results.max().unwrap();
     }
@@ -132,6 +133,29 @@ mod problem4 {
     #[test]
     fn test_factors() {
         assert!(palimdrome_factors(90, 100) == vec![(91, 99)]);
+    }
+
+}
+
+mod problem5 {
+    use ::std::ops::RangeInclusive;
+    fn divisible_by_all(n: u64, mut r: RangeInclusive<u64>) -> bool {
+        return r.all(|x| n % x == 0);
+    }
+
+
+    fn smallest_divisible_by(r: RangeInclusive<u64>) -> u64 {
+        return (1..).find(|&x| divisible_by_all(x, r.clone())).unwrap();
+    }
+
+    #[test]
+    fn example_works() {
+        assert!(divisible_by_all(2520, 1...10));
+        assert!(smallest_divisible_by(1...10) == 2520);
+    }
+
+    pub fn solve(r: RangeInclusive<u64>) -> u64 {
+        return smallest_divisible_by(r);
     }
 
 }
@@ -146,6 +170,9 @@ fn main() {
     let p3 = problem3::solve(600851475143);
     println!("Problem 3: {}", p3);
 
-    let p4 = problem4::solve();
+    let p4 = problem4::solve(100, 999);
     println!("Problem 4: {}", p4);
+    
+    let p5 = problem5::solve(1...20);
+    println!("Problem 5: {}", p5);
 }
