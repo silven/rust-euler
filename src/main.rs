@@ -61,10 +61,10 @@ mod problem3 {
     use ::std::collections::HashMap;
     
     fn primes(n: u64) -> Vec<u64> {
-        let mut v = vec![2];
-
+        let mut v = vec![];
         let mut black_list = HashMap::new();
-        for x in (3..n).step_by(2) {
+
+        for x in 2..n {
             if !black_list.contains_key(&x) {
                 for factor in (x..n).step_by(x) {
                     black_list.insert(factor, x);
@@ -95,9 +95,47 @@ mod problem3 {
         let prime_factors = factors_for(13195);
         assert!(prime_factors == vec![5, 7, 13, 29])
     }
-
 }
 
+mod problem4 {
+    fn is_palimdrome_number(n: u64) -> bool {
+        let byte_array = n.to_string().into_bytes();
+        let mut reversed_copy = byte_array.clone();
+        reversed_copy.reverse();
+        return byte_array == reversed_copy;
+    }
+
+    #[test]
+    fn test_is_palimdrome() {
+        assert!(is_palimdrome_number(1001));
+        assert!(is_palimdrome_number(10501));
+    }
+
+    fn palimdrome_factors(min: u64, max: u64) -> Vec<(u64,u64)> {
+        let mut v = Vec::new();
+        for a in min..max {
+            for b in a..max { 
+                let result = a * b;
+                if is_palimdrome_number(result) {
+                    v.push((a, b));
+                }
+            }
+        }
+        return v;
+    }
+
+    pub fn solve() -> u64 {
+        let factors = palimdrome_factors(100, 1000);
+        let results = factors.into_iter().map(|(a, b)| a * b);
+        return results.max().unwrap();
+    }
+
+    #[test]
+    fn test_factors() {
+        assert!(palimdrome_factors(90, 100) == vec![(91, 99)]);
+    }
+
+}
 
 fn main() {
     let p1 = problem1::solve(1000);
@@ -108,4 +146,7 @@ fn main() {
     
     let p3 = problem3::solve(600851475143);
     println!("Problem 3: {}", p3);
+    
+    let p4 = problem4::solve();
+    println!("Problem 4: {}", p4);
 }
