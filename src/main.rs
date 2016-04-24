@@ -12,7 +12,6 @@ mod problem1 {
         return numbers(max).sum();
     }
 
-
     #[test]
     fn example_works() {
         let data: Vec<u64> = numbers(10).collect();
@@ -52,22 +51,22 @@ mod problem2 {
 
     #[test]
     fn fibonnaci_works() {
-        let fibs: Vec<u64> = fibonacci().take(10).collect(); 
+        let fibs: Vec<u64> = fibonacci().take(10).collect();
         assert!(fibs == vec![1, 2, 3, 5, 8, 13, 21, 34, 55, 89]);
     }
 }
 
 mod problem3 {
-    use ::std::collections::HashMap;
-    
+    use std::collections::HashSet;
+
     fn primes(n: u64) -> Vec<u64> {
         let mut v = vec![];
-        let mut black_list = HashMap::new();
+        let mut black_list = HashSet::new();
 
         for x in 2..n {
-            if !black_list.contains_key(&x) {
+            if !black_list.contains(&x) {
                 for factor in (x..n).step_by(x) {
-                    black_list.insert(factor, x);
+                    black_list.insert(factor);
                 }
                 v.push(x);
             }
@@ -89,7 +88,7 @@ mod problem3 {
         let small_primes = primes(10);
         assert!(small_primes == vec![2, 3, 5, 7])
     }
-    
+
     #[test]
     fn example_works() {
         let prime_factors = factors_for(13195);
@@ -111,10 +110,10 @@ mod problem4 {
         assert!(is_palimdrome_number(10501));
     }
 
-    fn palimdrome_factors(min: u64, max: u64) -> Vec<(u64,u64)> {
+    fn palimdrome_factors(min: u64, max: u64) -> Vec<(u64, u64)> {
         let mut v = Vec::new();
         for a in min..max {
-            for b in a..max { 
+            for b in a..max {
                 let result = a * b;
                 if is_palimdrome_number(result) {
                     v.push((a, b));
@@ -143,10 +142,10 @@ fn main() {
 
     let p2 = problem2::solve(4000000);
     println!("Problem 2: {}", p2);
-    
+
     let p3 = problem3::solve(600851475143);
     println!("Problem 3: {}", p3);
-    
+
     let p4 = problem4::solve();
     println!("Problem 4: {}", p4);
 }
