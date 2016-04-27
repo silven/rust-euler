@@ -140,12 +140,16 @@ mod problem4 {
 mod problem5 {
     use ::std::ops::RangeInclusive;
     fn divisible_by_all(n: u64, mut r: RangeInclusive<u64>) -> bool {
+        if n == 0 {
+            return false;
+        }
         return r.all(|x| n % x == 0);
     }
 
 
     fn smallest_divisible_by(r: RangeInclusive<u64>) -> u64 {
-        return (1..).find(|&x| divisible_by_all(x, r.clone())).unwrap();
+        let step_size = r.clone().last().unwrap();
+        return (0..).step_by(step_size).find(|&x| divisible_by_all(x, r.clone())).unwrap();
     }
 
     #[test]
