@@ -58,7 +58,7 @@ mod problem2 {
 }
 
 mod problem3 {
-    use std::collections::HashSet;
+    use ::std::collections::HashSet;
 
     fn primes(n: u64) -> Vec<u64> {
         let mut v = vec![];
@@ -140,16 +140,13 @@ mod problem4 {
 mod problem5 {
     use ::std::ops::RangeInclusive;
     fn divisible_by_all(n: u64, mut r: RangeInclusive<u64>) -> bool {
-        if n == 0 {
-            return false;
-        }
         return r.all(|x| n % x == 0);
     }
 
 
     fn smallest_divisible_by(r: RangeInclusive<u64>) -> u64 {
         let step_size = r.clone().last().unwrap();
-        return (0..).step_by(step_size).find(|&x| divisible_by_all(x, r.clone())).unwrap();
+        return (step_size..).step_by(step_size).find(|&x| divisible_by_all(x, r.clone())).unwrap();
     }
 
     #[test]
@@ -162,6 +159,75 @@ mod problem5 {
         return smallest_divisible_by(r);
     }
 
+}
+
+mod problem6 {
+    use ::std::ops::RangeInclusive;
+    fn sum_of_squares(r: RangeInclusive<u64>) -> u64 {
+        return r.map(|x| x*x).sum();
+    }
+
+    fn square_of_sum(r: RangeInclusive<u64>) -> u64 {
+        let x: u64 = r.sum();
+        return x*x;
+    }
+
+    pub fn solve(r: RangeInclusive<u64>) -> u64 {
+        return square_of_sum(r.clone()) - sum_of_squares(r);
+    }
+
+    #[test]
+    fn example_works() {
+        assert!(sum_of_squares(1...10) == 385);
+        assert!(square_of_sum(1...10) == 3025);
+        assert!(solve(1...10) == 2640);
+    }
+}
+
+mod problem7 {
+    use ::std::collections::HashMap;
+    struct Primes {
+        factors: HashMap<u64,u64>,
+        current: u64,
+    }
+
+    fn primes() -> Primes {
+        return Primes {
+            factors: HashMap::new(),
+            current: 1,
+        }
+    }
+
+    impl Iterator for Primes {
+        type Item = u64;
+
+        fn next(&mut self) -> Option<u64> {
+            for x in self.current + 1.. {
+                match self.factors.remove(&x) {
+                    None => {
+                        self.factors.insert(x * x, x);
+                        self.current = x;
+                        return Some(self.current);
+                    }
+                    Some(f) => {
+                        let non_prime = (x + f..).step_by(f).find(|v| !self.factors.contains_key(v));
+                        self.factors.insert(non_prime.unwrap(), f);
+                    } 
+                }
+            }
+            return None;
+        }
+    }
+
+    pub fn solve(n: usize) -> u64 {
+        return primes().nth(n - 1).unwrap();
+    }
+
+    #[test]
+    fn test_primes() {
+        assert!(primes().nth(5) == Some(13));
+        assert!(primes().nth(500) == Some(3581));
+    }
 }
 
 fn main() {
@@ -179,4 +245,10 @@ fn main() {
     
     let p5 = problem5::solve(1...20);
     println!("Problem 5: {}", p5);
+    
+    let p6 = problem6::solve(1...100);
+    println!("Problem 6: {}", p6);
+    
+    let p7 = problem7::solve(10_001);
+    println!("Problem 7: {}", p7);
 }
