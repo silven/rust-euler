@@ -230,7 +230,35 @@ mod problem7 {
     }
 }
 
+mod problem9 {
+    fn find_triplet(sum: u64) -> (u64, u64, u64) {
+        for a in 1.. {
+            for b in a.. {
+                let c = sum - a - b;
+                if c <= b {
+                    break;
+                }
+                if a*a + b*b == c*c {
+                    return (a, b, c)
+                }
+            }
+        }
+        unreachable!();
+    }
+
+    pub fn solve(sum: u64) -> u64 {
+        let (a, b, c) = find_triplet(sum);
+        return a*b*c;
+    }
+
+    #[test]
+    fn example_works() {
+        assert!(find_triplet(12) == (3, 4, 5));
+    }
+}
+
 fn main() {
+    
     let p1 = problem1::solve(1000);
     println!("Problem 1: {}", p1);
 
@@ -251,4 +279,7 @@ fn main() {
     
     let p7 = problem7::solve(10_001);
     println!("Problem 7: {}", p7);
+    
+    let p9 = problem9::solve(1000);
+    println!("Problem 9: {}", p9);
 }
