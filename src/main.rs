@@ -204,6 +204,26 @@ mod problem9 {
     }
 }
 
+mod problem10 {
+    fn sum_primes_less_than(limit: u64) -> u64 {
+        return ::primes::generate().take_while(|&n| n < limit).sum();
+    }
+
+    pub fn solve(limit: u64) -> u64 {
+        return sum_primes_less_than(limit);
+    }
+
+    #[test]
+    fn example_works() {
+        assert!(sum_primes_less_than(10) == 17);
+    }
+    
+    #[test]
+    fn regression_test() {
+        assert!(solve(2_000_000) == 142913828922);
+    }
+}
+
 fn main() {
     let p1 = problem1::solve(1000);
     println!("Problem 1: {}", p1);
@@ -228,4 +248,7 @@ fn main() {
 
     let p9 = problem9::solve(1000);
     println!("Problem 9: {}", p9);
+
+    let p10 = problem10::solve(2_000_000);
+    println!("Problem 10: {}", p10);
 }
