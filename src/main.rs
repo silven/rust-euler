@@ -18,11 +18,14 @@ mod problem1 {
         let data: Vec<u64> = numbers(10).collect();
         assert!(data == vec![3, 5, 6, 9])
     }
+
+    #[test]
+    fn regression_test() {
+        assert!(solve(1000) == 233168);
+    }
 }
 
 mod problem2 {
-    // Find sum of even valued fib numbers
-
     struct Fibonacci {
         curr: u64,
         next: u64,
@@ -54,6 +57,11 @@ mod problem2 {
     fn fibonnaci_works() {
         let fibs: Vec<u64> = fibonacci().take(10).collect();
         assert!(fibs == vec![1, 2, 3, 5, 8, 13, 21, 34, 55, 89]);
+    }
+    
+    #[test]
+    fn regression_test() {
+        assert!(solve(4_000_000) == 4613732);
     }
 }
 
@@ -95,6 +103,11 @@ mod problem3 {
         let prime_factors = factors_for(13195);
         assert!(prime_factors == vec![5, 7, 13, 29])
     }
+
+    #[test]
+    fn regression_test() {
+        assert!(solve(600851475143) == 6857);
+    }
 }
 
 mod problem4 {
@@ -135,6 +148,10 @@ mod problem4 {
         assert!(palimdrome_factors(90, 100) == vec![(91, 99)]);
     }
 
+    #[test]
+    fn regression_test() {
+        assert!(solve(100, 999) == 906609);
+    }
 }
 
 mod problem5 {
@@ -159,6 +176,10 @@ mod problem5 {
         return smallest_divisible_by(r);
     }
 
+    #[test]
+    fn regression_test() {
+        assert!(solve(1...20) == 232792560);
+    }
 }
 
 mod problem6 {
@@ -181,6 +202,11 @@ mod problem6 {
         assert!(sum_of_squares(1...10) == 385);
         assert!(square_of_sum(1...10) == 3025);
         assert!(solve(1...10) == 2640);
+    }
+    
+    #[test]
+    fn regression_test() {
+        assert!(solve(1...100) == 25164150);
     }
 }
 
@@ -228,6 +254,11 @@ mod problem7 {
         assert!(primes().nth(5) == Some(13));
         assert!(primes().nth(500) == Some(3581));
     }
+    
+    #[test]
+    fn regression_test() {
+        assert!(solve(10_001) == 104743);
+    }
 }
 
 mod problem9 {
@@ -255,6 +286,11 @@ mod problem9 {
     fn example_works() {
         assert!(find_triplet(12) == (3, 4, 5));
     }
+    
+    #[test]
+    fn regression_test() {
+        assert!(solve(1000) == 31875000);
+    }
 }
 
 fn main() {
@@ -262,7 +298,7 @@ fn main() {
     let p1 = problem1::solve(1000);
     println!("Problem 1: {}", p1);
 
-    let p2 = problem2::solve(4000000);
+    let p2 = problem2::solve(4_000_000);
     println!("Problem 2: {}", p2);
 
     let p3 = problem3::solve(600851475143);
