@@ -219,6 +219,54 @@ mod problem12 {
     }
 }
 
+
+mod problem14 {
+    use std::ops::RangeInclusive;
+    struct Collatz {
+        n: Option<u64>,
+    }
+
+    fn collatz_from(n: u64) -> Collatz {
+        return Collatz{n: Some(n)};
+    }
+
+    impl Iterator for Collatz {
+        type Item = u64;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            let current = self.n;
+            let next = match current {
+                None => None,
+                Some(1) => None,
+                Some(x) if x % 2 == 0 => Some(x / 2),
+                Some(x) => Some(x * 3 + 1),
+            };
+            self.n = next;
+            return current;
+        }
+    }
+
+    fn collatz_length(n: u64) -> usize {
+        return collatz_from(n).count();
+    }
+
+    pub fn solve(r: RangeInclusive<u64>) -> u64 {
+        return r.max_by_key(|&n| collatz_length(n)).unwrap();
+    }
+
+    #[test]
+    fn example_sequence() {
+        let seq: Vec<u64> = collatz_from(13).collect();
+        assert!(seq == vec![13,40,20,10,5,16,8,4,2,1]);
+    }
+
+    #[test]
+    fn test_solver() {
+        assert!(solve(1...10) == 9);
+    }
+
+}
+
 fn main() {
     let p1 = problem1::solve(1000);
     println!("Problem 1: {}", p1);
@@ -249,4 +297,7 @@ fn main() {
     
     let p12 = problem12::solve(500);
     println!("Problem 12: {}", p12);
+
+    let p14 = problem14::solve(1...1000_000);
+    println!("Problem 14: {}", p14);
 }
