@@ -20,22 +20,12 @@ mod problem1 {
         let data: Vec<u64> = numbers(10).collect();
         assert!(data == vec![3, 5, 6, 9])
     }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(1000) == 233168);
-    }
 }
 
 mod problem2 {
     pub fn solve(max_val: u64) -> u64 {
         let fibs = ::fibonacci::generate().filter(|&n| n % 2 == 0).take_while(|&n| n < max_val);
         return fibs.sum();
-    }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(4_000_000) == 4613732);
     }
 }
 
@@ -53,11 +43,6 @@ mod problem3 {
     fn example_works() {
         let prime_factors = factors_for(13195);
         assert!(prime_factors == vec![5, 7, 13, 29])
-    }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(600851475143) == 6857);
     }
 }
 
@@ -98,11 +83,6 @@ mod problem4 {
     fn test_factors() {
         assert!(palimdrome_factors(90, 100) == vec![(91, 99)]);
     }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(100, 999) == 906609);
-    }
 }
 
 mod problem5 {
@@ -125,11 +105,6 @@ mod problem5 {
 
     pub fn solve(r: RangeInclusive<u64>) -> u64 {
         return smallest_divisible_by(r);
-    }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(1...20) == 232792560);
     }
 }
 
@@ -154,21 +129,11 @@ mod problem6 {
         assert!(square_of_sum(1...10) == 3025);
         assert!(solve(1...10) == 2640);
     }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(1...100) == 25164150);
-    }
 }
 
 mod problem7 {
     pub fn solve(n: usize) -> u64 {
         return ::primes::generate().nth(n - 1).unwrap();
-    }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(10_001) == 104743);
     }
 }
 
@@ -197,11 +162,6 @@ mod problem9 {
     fn example_works() {
         assert!(find_triplet(12) == (3, 4, 5));
     }
-
-    #[test]
-    fn regression_test() {
-        assert!(solve(1000) == 31875000);
-    }
 }
 
 mod problem10 {
@@ -217,10 +177,45 @@ mod problem10 {
     fn example_works() {
         assert!(sum_primes_less_than(10) == 17);
     }
+}
+
+mod problem12 {
+    use ::std::iter::once;
+    
+    fn count_divisors(n: u64) -> usize {
+        return (1...n/2).filter(|x| n % x == 0).chain(once(n)).count();
+    }
+
+    /* 
+     * Triangle number at index i is == i*(i+1)/2
+     * Since i and i+1 is co-prime, we can compute
+     * the number of divisors as count_divisors(i)
+     * x count_divisors(i+1). Since only one of
+     * i and i+1 is even, we adjust for the 
+     * factor 1 / 2 accordingly.
+     */
+    fn triangles_divisors(i: u64) -> usize {
+        if i % 2 == 0 {
+            count_divisors(i/2) * count_divisors(i+1)
+        } else {
+            count_divisors(i) * count_divisors((i+1) / 2)
+        }
+    }
+
+    pub fn solve(n: usize) -> u64 {
+        let index = (1..).find(|&i| triangles_divisors(i) > n).unwrap();
+        return index*(index+1)/2;
+    }
     
     #[test]
-    fn regression_test() {
-        assert!(solve(2_000_000) == 142913828922);
+    fn test_count_divisors() {
+        assert!(count_divisors(10) == 4);
+        assert!(count_divisors(28) == 6);
+    }
+    
+    #[test]
+    fn example_works() {
+        assert!(solve(5) == 28);
     }
 }
 
@@ -251,4 +246,7 @@ fn main() {
 
     let p10 = problem10::solve(2_000_000);
     println!("Problem 10: {}", p10);
+    
+    let p12 = problem12::solve(500);
+    println!("Problem 12: {}", p12);
 }
