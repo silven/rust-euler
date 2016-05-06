@@ -4,6 +4,7 @@
 
 mod primes;
 mod fibonacci;
+mod utils;
 
 mod problem1 {
     fn numbers(max: u64) -> Box<Iterator<Item = u64>> {
@@ -48,10 +49,10 @@ mod problem3 {
 
 mod problem4 {
     fn is_palimdrome_number(n: u64) -> bool {
-        let byte_array = n.to_string().into_bytes();
-        let mut reversed_copy = byte_array.clone();
-        reversed_copy.reverse();
-        return byte_array == reversed_copy;
+        let digits = ::utils::int_to_digits(n);
+        let mut reversed = digits.clone();
+        reversed.reverse();
+        return digits == reversed;
     }
 
     #[test]
