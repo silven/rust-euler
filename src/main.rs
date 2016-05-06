@@ -6,6 +6,17 @@ mod primes;
 mod fibonacci;
 mod utils;
 
+use std::time::Instant;
+
+macro_rules! time {
+    ($name:expr, $call:expr) => {{
+        let start = Instant::now();
+        let answer = $call;
+        let duration = start.elapsed(); 
+        println!("{}: {} (took: {})", $name, answer, utils::format_duration(duration));
+    }}
+}
+
 mod problem1 {
     fn numbers(max: u64) -> Box<Iterator<Item = u64>> {
         let numbers = 1..max;
@@ -287,40 +298,83 @@ mod problem15 {
     }
 }
 
+mod problem16 {
+    /*
+     * Multiplies an array of digits by a factor. 
+     * Returns a new vector with the digits in the 
+     * result. For simplicity's sake, the least 
+     * significant digit is located at index zero, 
+     * making the array look reversed, but it still works.
+     */
+    fn mul(digits: &[u64], factor: u64) -> Vec<u64> {
+        let mut next_digits = vec![];
+        let mut carry = 0;
+        for d in digits {
+            let value = factor * d+carry;
+            carry = value / 10;
+            next_digits.push(value % 10);
+        }
+        if carry > 0 {
+            next_digits.push(carry);
+        }
+        return next_digits;
+    }
+
+    pub fn solve(factor: u64, power: u64) -> u64 {
+        let mut digits = vec![1];
+        for _ in 1...power {
+            digits = mul(&digits, factor);
+        }
+        return digits.iter().sum();
+    }
+    
+    #[test]
+    fn test_mul() {
+        assert!(mul(&[2, 3], 2) == vec![4, 6]);
+    }
+
+    #[test]
+    fn test_mul_internal_carry() {
+        assert!(mul(&[5, 1], 2) == vec![0, 3]);
+    }
+    
+    #[test]
+    fn test_mul_external_carry() {
+        assert!(mul(&[8], 8) == vec![4, 6]);
+        assert!(mul(&[0, 1], 10) == vec![0, 0, 1]);
+    }
+
+    #[test]
+    fn example() {
+        assert!(solve(2, 15) == 26);
+    }
+}
+
+
 fn main() {
-    let p1 = problem1::solve(1000);
-    println!("Problem 1: {}", p1);
+    time!("Problem 1 ", problem1::solve(1000));
 
-    let p2 = problem2::solve(4_000_000);
-    println!("Problem 2: {}", p2);
+    time!("Problem 2 ", problem2::solve(4_000_000));
 
-    let p3 = problem3::solve(600851475143);
-    println!("Problem 3: {}", p3);
+    time!("Problem 3 ", problem3::solve(600851475143));
 
-    let p4 = problem4::solve(100, 999);
-    println!("Problem 4: {}", p4);
+    time!("Problem 4 ", problem4::solve(100, 999));
 
-    let p5 = problem5::solve(1...20);
-    println!("Problem 5: {}", p5);
+    time!("Problem 5 ", problem5::solve(1...20));
 
-    let p6 = problem6::solve(1...100);
-    println!("Problem 6: {}", p6);
+    time!("Problem 6 ", problem6::solve(1...100));
 
-    let p7 = problem7::solve(10_001);
-    println!("Problem 7: {}", p7);
+    time!("Problem 7 ", problem7::solve(10_001));
 
-    let p9 = problem9::solve(1000);
-    println!("Problem 9: {}", p9);
+    time!("Problem 9 ", problem9::solve(1000));
 
-    let p10 = problem10::solve(2_000_000);
-    println!("Problem 10: {}", p10);
+    time!("Problem 10", problem10::solve(2_000_000));
     
-    let p12 = problem12::solve(500);
-    println!("Problem 12: {}", p12);
+    time!("Problem 12", problem12::solve(500));
 
-    let p14 = problem14::solve(1...1000_000);
-    println!("Problem 14: {}", p14);
+    time!("Problem 14", problem14::solve(1...1_000_000));
     
-    let p15 = problem15::solve(20);
-    println!("Problem 15: {}", p15);
+    time!("Problem 15", problem15::solve(20));
+    
+    time!("Problem 16", problem16::solve(2, 1000));
 }
