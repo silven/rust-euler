@@ -264,7 +264,26 @@ mod problem14 {
     fn test_solver() {
         assert!(solve(1...10) == 9);
     }
+}
 
+mod problem15 {
+    fn choose(n: u64, k: u64) -> u64 {
+        return (1...k).fold(1, |acc, i| acc * (n + 1 - i) / i)
+    }
+
+    pub fn solve(size: u64) -> u64 {
+        return choose(2 * size, size);
+    }
+
+    #[test]
+    fn test_choose() {
+        assert!(choose(5, 2) == 10);
+    }
+
+    #[test]
+    fn example() {
+        assert!(solve(2) == 6);
+    }
 }
 
 fn main() {
@@ -300,4 +319,7 @@ fn main() {
 
     let p14 = problem14::solve(1...1000_000);
     println!("Problem 14: {}", p14);
+    
+    let p15 = problem15::solve(20);
+    println!("Problem 15: {}", p15);
 }
