@@ -350,7 +350,7 @@ mod problem16 {
     }
 }
 
-mod problem17 {
+mod problem18 {
     use ::std::cmp::max;
 
     pub fn input() -> Vec<Vec<u64>> {
@@ -425,5 +425,5 @@ fn main() {
     
     time!("Problem 16", problem16::solve(2, 1000));
     
-    time!("Problem 17", problem17::solve(&::problem17::input()));
+    time!("Problem 18", problem18::solve(&::problem18::input()));
 }
