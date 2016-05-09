@@ -2,6 +2,8 @@
 #![feature(step_by)]
 #![feature(inclusive_range, inclusive_range_syntax)]
 
+extern crate num;
+
 mod primes;
 mod fibonacci;
 mod utils;
@@ -397,6 +399,75 @@ mod problem18 {
     }
 }
 
+mod problem20 {
+    use ::num::bigint::{BigUint, ToBigUint};
+    use ::num::traits::{Zero, One};
+    use ::num::integer::Integer;
+    use ::num::ToPrimitive;
+
+    struct Digitizer {
+        n: Option<BigUint>,
+    }
+
+    impl Iterator for Digitizer {
+        type Item = u64;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            let ten: BigUint = 10.to_biguint().unwrap();
+
+            let mut current = None;
+            let mut next = None;
+
+            if let Some(ref n) = self.n {
+                let (quotient, remainder) = n.div_rem(&ten);
+                next = Some(quotient);
+                current = remainder.to_u64();
+            }
+
+            if let Some(n) = next {
+                if n > Zero::zero() {
+                    self.n = Some(n);
+                } else {
+                    self.n = None;
+                }
+            }
+
+            return current;
+        }
+    }
+
+    fn digits_in(x: BigUint) -> Vec<u64> {
+        return Digitizer{n: Some(x)}.collect();
+    }
+
+    fn big_factorial(x: u64) -> BigUint {
+        return (2...x).fold(One::one(), |acc, n| acc * n.to_biguint().unwrap());
+    }
+
+    pub fn solve(n: u64) -> u64 {
+        return digits_in(big_factorial(n)).iter().sum();
+    }
+
+    #[test]
+    fn test_digits_in() {
+        let a: BigUint = big_factorial(10);
+        let ds = digits_in(a);
+        assert!(ds == vec![0, 0, 8, 8, 2, 6, 3]);
+    }
+    
+    #[test]
+    fn test_factorial() {
+        let a: BigUint = big_factorial(10);
+        assert!(a == 3628800.to_biguint().unwrap());
+    }
+    
+    #[test]
+    fn example() {
+        assert!(solve(10) == 27);
+    }
+
+}
+
 
 fn main() {
     time!("Problem 1 ", problem1::solve(1000));
@@ -426,4 +497,6 @@ fn main() {
     time!("Problem 16", problem16::solve(2, 1000));
     
     time!("Problem 18", problem18::solve(&::problem18::input()));
+    
+    time!("Problem 20", problem20::solve(100));
 }
