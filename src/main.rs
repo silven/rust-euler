@@ -8,16 +8,7 @@ mod primes;
 mod fibonacci;
 mod utils;
 
-use std::time::Instant;
-
-macro_rules! time {
-    ($name:expr, $call:expr) => {{
-        let start = Instant::now();
-        let answer = $call;
-        let duration = start.elapsed(); 
-        println!("{}: {} (took: {})", $name, answer, utils::format_duration(duration));
-    }}
-}
+use utils::time;
 
 mod problem1 {
     fn numbers(max: u64) -> Box<Iterator<Item = u64>> {
@@ -470,33 +461,33 @@ mod problem20 {
 
 
 fn main() {
-    time!("Problem 1 ", problem1::solve(1000));
+    time("Problem 1 ", || problem1::solve(1000));
 
-    time!("Problem 2 ", problem2::solve(4_000_000));
+    time("Problem 2 ", || problem2::solve(4_000_000));
 
-    time!("Problem 3 ", problem3::solve(600851475143));
+    time("Problem 3 ", || problem3::solve(600851475143));
 
-    time!("Problem 4 ", problem4::solve(100, 999));
+    time("Problem 4 ", || problem4::solve(100, 999));
 
-    time!("Problem 5 ", problem5::solve(1...20));
+    time("Problem 5 ", || problem5::solve(1...20));
 
-    time!("Problem 6 ", problem6::solve(1...100));
+    time("Problem 6 ", || problem6::solve(1...100));
 
-    time!("Problem 7 ", problem7::solve(10_001));
+    time("Problem 7 ", || problem7::solve(10_001));
 
-    time!("Problem 9 ", problem9::solve(1000));
+    time("Problem 9 ", || problem9::solve(1000));
 
-    time!("Problem 10", problem10::solve(2_000_000));
+    time("Problem 10", || problem10::solve(2_000_000));
     
-    time!("Problem 12", problem12::solve(500));
+    time("Problem 12", || problem12::solve(500));
 
-    time!("Problem 14", problem14::solve(1...1_000_000));
+    time("Problem 14", || problem14::solve(1...1_000_000));
     
-    time!("Problem 15", problem15::solve(20));
+    time("Problem 15", || problem15::solve(20));
     
-    time!("Problem 16", problem16::solve(2, 1000));
+    time("Problem 16", || problem16::solve(2, 1000));
     
-    time!("Problem 18", problem18::solve(&::problem18::input()));
+    time("Problem 18", || problem18::solve(&::problem18::input()));
     
-    time!("Problem 20", problem20::solve(100));
+    time("Problem 20", || problem20::solve(100));
 }

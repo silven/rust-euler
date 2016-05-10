@@ -1,4 +1,12 @@
-use std::time::Duration;
+use std::time::{Duration, Instant};
+use std::fmt::Display;
+
+pub fn time<F: FnOnce() -> A, A: Display>(name: &str, func: F) {
+    let start = Instant::now();
+    let answer = func();
+    let duration = start.elapsed(); 
+    println!("{}: {} (took: {})", name, answer, format_duration(duration));
+}
 
 pub fn format_duration(d: Duration) -> String {
     if d.as_secs() > 0 {
