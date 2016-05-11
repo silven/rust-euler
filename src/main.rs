@@ -456,7 +456,32 @@ mod problem20 {
     fn example() {
         assert!(solve(10) == 27);
     }
+}
 
+mod problem21 {
+    use ::std::collections::HashSet;
+
+    fn divisors_sum(n: usize) -> usize {
+        return (1...n/2).filter(|x| n % x == 0).sum();
+    }
+
+    pub fn solve(limit: usize) -> usize {
+        let mut amicable = HashSet::new();
+        for a in 1..limit {
+            let b = divisors_sum(a);
+            if a != b && divisors_sum(b) == a {
+                amicable.insert(a);
+                amicable.insert(b);
+            }
+        }
+        return amicable.iter().sum();
+    }
+
+    #[test]
+    fn example() {
+        assert!(divisors_sum(220) == 284);
+        assert!(divisors_sum(284) == 220);
+    }
 }
 
 
@@ -490,4 +515,6 @@ fn main() {
     time("Problem 18", || problem18::solve(&::problem18::input()));
     
     time("Problem 20", || problem20::solve(100));
+    
+    time("Problem 21", || problem21::solve(10000));
 }
