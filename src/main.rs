@@ -1,5 +1,6 @@
 #![feature(iter_arith)]
 #![feature(step_by)]
+#![feature(unboxed_closures, fn_traits)]
 #![feature(inclusive_range, inclusive_range_syntax)]
 
 extern crate num;
@@ -459,8 +460,24 @@ mod problem20 {
 }
 
 mod problem21 {
-    use ::std::collections::HashSet;
+    use ::std::collections::{HashSet, HashMap};
 
+    struct Memo<F, A, R> {
+        data: HashMap<A, R>,
+        func: F,
+    }
+
+    impl<F: Fn(A) -> R, A: ::std::cmp::Eq + ::std::hash::Hash + Copy, R: Copy> Memo<F, A, R> {
+        fn call(&mut self, arg: A) -> R {
+            let result = match self.data.remove(&arg) {
+                Some(r) => r,
+                None => self.func.call((arg,)),
+            };
+            self.data.insert(arg, result);
+            return result;
+        }
+    }
+    
     fn divisors_sum(n: usize) -> usize {
         return (1...n/2).filter(|x| n % x == 0).sum();
     }
@@ -475,6 +492,22 @@ mod problem21 {
             }
         }
         return amicable.iter().sum();
+    }
+
+    fn memoize<F, A, R>(func: F) -> Memo<F, A, R> 
+        where F: Fn(A) -> R,
+              A: ::std::cmp::Eq + ::std::hash::Hash + Copy {
+        return Memo {data: HashMap::new(), func: func};
+    }
+
+    #[test]
+    fn memo() {
+        let mut cache = memoize(|x| x + 2);
+        assert!(cache.call(2) == 4);
+
+        let mut cache = memoize(|n| divisors_sum(n));
+        assert!(cache.call(220) == 284);
+        assert!(cache.call(284) == 220);
     }
 
     #[test]
