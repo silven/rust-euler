@@ -485,6 +485,36 @@ mod problem21 {
 }
 
 
+mod problem22 {
+    use ::std::fs::File;
+    use ::std::io::Read;
+
+    fn score(name: &str) -> usize {
+        // The byte for A is 65 in ascii, so C - 64 should be 3
+        return name.as_bytes().iter().fold(0, |acc, b| acc + (b - 64) as usize);
+    }
+
+    #[test]
+    fn test_name_score() {
+        assert!(score("COLIN") == 53);
+    }
+
+    pub fn read_names() -> Vec<String> {
+        let mut f = File::open("data/p022_names.txt").unwrap();
+        let mut s = String::new();
+        f.read_to_string(&mut s).unwrap();
+
+        return s.split(",").map(|s| s.to_owned()).collect();
+    }
+
+    pub fn solve() -> usize {
+        let the_names = read_names();
+        let mut names: Vec<&str> = the_names.iter().map(|s| s.trim_matches('"')).collect();
+        names.sort();
+        return names.iter().enumerate().fold(0, |acc, (idx, name)| acc + (idx + 1) * score(name));
+    }
+}
+
 fn main() {
     time("Problem 1 ", || problem1::solve(1000));
 
@@ -517,4 +547,6 @@ fn main() {
     time("Problem 20", || problem20::solve(100));
 
     time("Problem 21", || problem21::solve(10000));
+    
+    time("Problem 22", || problem22::solve());
 }
