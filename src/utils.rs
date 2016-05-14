@@ -1,5 +1,6 @@
-use std::time::{Duration, Instant};
+use std::collections::HashMap;
 use std::fmt::Display;
+use std::time::{Duration, Instant};
 
 pub fn time<F: FnOnce() -> A, A: Display>(name: &str, func: F) {
     let start = Instant::now();
@@ -51,4 +52,36 @@ fn convert_int_to_digits() {
     assert!(int_to_digits(123) == vec![1, 2, 3]);
     assert!(int_to_digits(10) == vec![1, 0]);
     assert!(int_to_digits(0) == vec![]);
+}
+
+pub struct Memo<F, A, R> {
+    data: HashMap<A, R>,
+    func: F,
+}
+
+impl<F: Fn(A) -> R, A: ::std::cmp::Eq + ::std::hash::Hash + Copy, R: Copy> Memo<F, A, R> {
+    pub fn call(&mut self, arg: A) -> R {
+        let result = match self.data.remove(&arg) {
+            Some(r) => r,
+            None => self.func.call((arg,)),
+        };
+        self.data.insert(arg, result);
+        return result;
+    }
+}
+
+pub fn memoize<F, A, R>(func: F) -> Memo<F, A, R>
+    where F: Fn(A) -> R,
+          A: ::std::cmp::Eq + ::std::hash::Hash + Copy
+{
+    return Memo {
+        data: HashMap::new(),
+        func: func,
+    };
+}
+
+#[test]
+fn memoization() {
+    let mut cache = memoize(|x| x + 2);
+    assert!(cache.call(2) == 4);
 }

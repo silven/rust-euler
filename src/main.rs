@@ -1,6 +1,7 @@
 #![feature(iter_arith)]
 #![feature(step_by)]
 #![feature(inclusive_range, inclusive_range_syntax)]
+#![feature(unboxed_closures, fn_traits)]
 
 extern crate num;
 
@@ -463,10 +464,12 @@ mod problem21 {
     }
 
     pub fn solve(limit: usize) -> usize {
+        let mut div_sum = ::utils::memoize(divisors_sum);
+
         let mut amicable = HashSet::new();
         for a in 1..limit {
-            let b = divisors_sum(a);
-            if a != b && divisors_sum(b) == a {
+            let b = div_sum.call(a);
+            if a != b && div_sum.call(b) == a {
                 amicable.insert(a);
                 amicable.insert(b);
             }
