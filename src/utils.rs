@@ -4,13 +4,16 @@ use std::fmt::Display;
 pub fn time<F: FnOnce() -> A, A: Display>(name: &str, func: F) {
     let start = Instant::now();
     let answer = func();
-    let duration = start.elapsed(); 
+    let duration = start.elapsed();
     println!("{}: {} (took: {})", name, answer, format_duration(duration));
 }
 
 pub fn format_duration(d: Duration) -> String {
     if d.as_secs() > 0 {
-        format!("{}s {:.*}ms", d.as_secs(), 3, d.subsec_nanos() as f64 / 1_000_000.0)
+        format!("{}s {:.*}ms",
+                d.as_secs(),
+                3,
+                d.subsec_nanos() as f64 / 1_000_000.0)
     } else if d.subsec_nanos() > 1_000_000 {
         format!("{:.*}ms", 3, d.subsec_nanos() as f64 / 1_000_000.0)
     } else if d.subsec_nanos() > 1000 {
@@ -38,7 +41,7 @@ impl Iterator for IterDigits {
 }
 
 pub fn int_to_digits(x: u64) -> Vec<u64> {
-    let mut v: Vec<u64> = IterDigits{n: x}.collect();
+    let mut v: Vec<u64> = IterDigits { n: x }.collect();
     v.reverse();
     return v;
 }

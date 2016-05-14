@@ -186,38 +186,37 @@ mod problem10 {
 
 mod problem12 {
     use ::std::iter::once;
-    
+
     fn count_divisors(n: u64) -> usize {
-        return (1...n/2).filter(|x| n % x == 0).chain(once(n)).count();
+        return (1...n / 2).filter(|x| n % x == 0).chain(once(n)).count();
     }
 
-    /* 
-     * Triangle number at index i is == i*(i+1)/2
-     * Since i and i+1 is co-prime, we can compute
-     * the number of divisors as count_divisors(i)
-     * x count_divisors(i+1). Since only one of
-     * i and i+1 is even, we adjust for the 
-     * factor 1 / 2 accordingly.
-     */
+    // Triangle number at index i is == i*(i+1)/2
+    // Since i and i+1 is co-prime, we can compute
+    // the number of divisors as count_divisors(i)
+    // x count_divisors(i+1). Since only one of
+    // i and i+1 is even, we adjust for the
+    // factor 1 / 2 accordingly.
+    //
     fn triangles_divisors(i: u64) -> usize {
         if i % 2 == 0 {
-            count_divisors(i/2) * count_divisors(i+1)
+            count_divisors(i / 2) * count_divisors(i + 1)
         } else {
-            count_divisors(i) * count_divisors((i+1) / 2)
+            count_divisors(i) * count_divisors((i + 1) / 2)
         }
     }
 
     pub fn solve(n: usize) -> u64 {
         let index = (1..).find(|&i| triangles_divisors(i) > n).unwrap();
-        return index*(index+1)/2;
+        return index * (index + 1) / 2;
     }
-    
+
     #[test]
     fn test_count_divisors() {
         assert!(count_divisors(10) == 4);
         assert!(count_divisors(28) == 6);
     }
-    
+
     #[test]
     fn example_works() {
         assert!(solve(5) == 28);
@@ -232,7 +231,7 @@ mod problem14 {
     }
 
     fn collatz_from(n: u64) -> Collatz {
-        return Collatz{n: Some(n)};
+        return Collatz { n: Some(n) };
     }
 
     impl Iterator for Collatz {
@@ -262,7 +261,7 @@ mod problem14 {
     #[test]
     fn example_sequence() {
         let seq: Vec<u64> = collatz_from(13).collect();
-        assert!(seq == vec![13,40,20,10,5,16,8,4,2,1]);
+        assert!(seq == vec![13, 40, 20, 10, 5, 16, 8, 4, 2, 1]);
     }
 
     #[test]
@@ -273,7 +272,7 @@ mod problem14 {
 
 mod problem15 {
     fn choose(n: u64, k: u64) -> u64 {
-        return (1...k).fold(1, |acc, i| acc * (n + 1 - i) / i)
+        return (1...k).fold(1, |acc, i| acc * (n + 1 - i) / i);
     }
 
     pub fn solve(size: u64) -> u64 {
@@ -292,18 +291,17 @@ mod problem15 {
 }
 
 mod problem16 {
-    /*
-     * Multiplies an array of digits by a factor. 
-     * Returns a new vector with the digits in the 
-     * result. For simplicity's sake, the least 
-     * significant digit is located at index zero, 
-     * making the array look reversed, but it still works.
-     */
+    // Multiplies an array of digits by a factor.
+    // Returns a new vector with the digits in the
+    // result. For simplicity's sake, the least
+    // significant digit is located at index zero,
+    // making the array look reversed, but it still works.
+    //
     fn mul(digits: &[u64], factor: u64) -> Vec<u64> {
         let mut next_digits = vec![];
         let mut carry = 0;
         for d in digits {
-            let value = factor * d+carry;
+            let value = factor * d + carry;
             carry = value / 10;
             next_digits.push(value % 10);
         }
@@ -320,7 +318,7 @@ mod problem16 {
         }
         return digits.iter().sum();
     }
-    
+
     #[test]
     fn test_mul() {
         assert!(mul(&[2, 3], 2) == vec![4, 6]);
@@ -330,7 +328,7 @@ mod problem16 {
     fn test_mul_internal_carry() {
         assert!(mul(&[5, 1], 2) == vec![0, 3]);
     }
-    
+
     #[test]
     fn test_mul_external_carry() {
         assert!(mul(&[8], 8) == vec![4, 6]);
@@ -372,7 +370,9 @@ mod problem18 {
         }
 
         let value = data[row][index];
-        return value + max(route_sum(data, row+1, index), route_sum(data, row+1, index+1));
+        return value +
+               max(route_sum(data, row + 1, index),
+                   route_sum(data, row + 1, index + 1));
     }
 
     pub fn solve(data: &Vec<Vec<u64>>) -> u64 {
@@ -381,10 +381,7 @@ mod problem18 {
 
     #[test]
     fn example() {
-        let example_data = vec![vec![3],
-                        vec![7, 4],
-                        vec![2, 4, 6],
-                        vec![8, 5, 9, 3]];
+        let example_data = vec![vec![3], vec![7, 4], vec![2, 4, 6], vec![8, 5, 9, 3]];
 
         assert!(solve(&example_data) == 23);
     }
@@ -428,7 +425,7 @@ mod problem20 {
     }
 
     fn digits_in(x: BigUint) -> Vec<u64> {
-        return Digitizer{n: Some(x)}.collect();
+        return Digitizer { n: Some(x) }.collect();
     }
 
     fn big_factorial(x: u64) -> BigUint {
@@ -445,13 +442,13 @@ mod problem20 {
         let ds = digits_in(a);
         assert!(ds == vec![0, 0, 8, 8, 2, 6, 3]);
     }
-    
+
     #[test]
     fn test_factorial() {
         let a: BigUint = big_factorial(10);
         assert!(a == 3628800.to_biguint().unwrap());
     }
-    
+
     #[test]
     fn example() {
         assert!(solve(10) == 27);
@@ -462,7 +459,7 @@ mod problem21 {
     use ::std::collections::HashSet;
 
     fn divisors_sum(n: usize) -> usize {
-        return (1...n/2).filter(|x| n % x == 0).sum();
+        return (1...n / 2).filter(|x| n % x == 0).sum();
     }
 
     pub fn solve(limit: usize) -> usize {
@@ -503,18 +500,18 @@ fn main() {
     time("Problem 9 ", || problem9::solve(1000));
 
     time("Problem 10", || problem10::solve(2_000_000));
-    
+
     time("Problem 12", || problem12::solve(500));
 
     time("Problem 14", || problem14::solve(1...1_000_000));
-    
+
     time("Problem 15", || problem15::solve(20));
-    
+
     time("Problem 16", || problem16::solve(2, 1000));
-    
+
     time("Problem 18", || problem18::solve(&::problem18::input()));
-    
+
     time("Problem 20", || problem20::solve(100));
-    
+
     time("Problem 21", || problem21::solve(10000));
 }
