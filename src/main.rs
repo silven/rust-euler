@@ -3,6 +3,7 @@
 #![feature(unboxed_closures, fn_traits)]
 
 extern crate num;
+extern crate itertools;
 
 mod primes;
 mod fibonacci;
@@ -516,6 +517,7 @@ mod problem22 {
 
 mod problem23 {
     use ::std::collections::HashSet;
+    use itertools::Itertools;
 
     fn divisors_sum(n: usize) -> usize {
         return (1...n / 2).filter(|x| n % x == 0).sum();
@@ -529,16 +531,18 @@ mod problem23 {
         let limit = 28123;
 
         let abundant_numbers: Vec<usize> = (12...limit).filter(|&n| is_abundant(n)).collect();
-        // lazy man's cartesian product
-        let possible_combinations = abundant_numbers.iter().zip(abundant_numbers.iter());
+        let possible_combinations = abundant_numbers.iter().cartesian_product(abundant_numbers.iter());
         let possible_sums: HashSet<usize> = possible_combinations.map(|(a, b)| a + b).collect();
-        let non_summable_sum = (1...limit).filter(|x| possible_sums.contains(&x)).sum();
+        let non_summable_sum = (1...limit).filter(|x| !possible_sums.contains(&x)).sum();
 
         return non_summable_sum;
     }
 
     #[test]
     fn example() {
+        let x: Vec<(usize, char)> = (0..2).cartesian_product("αβ".chars()).collect();
+
+        assert!(x == vec![(0, 'α'), (0, 'β'), (1, 'α'), (1, 'β')]);
         assert!(is_abundant(12) == true);
     }
 }

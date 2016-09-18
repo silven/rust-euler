@@ -5,3 +5,4 @@ authors = ["Mikael Silvén <mikael@silven.nu>"]
 
 [dependencies]
 num = "0.1.32"
+itertools = "0.4.19"
