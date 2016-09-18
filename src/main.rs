@@ -1,4 +1,3 @@
-#![feature(iter_arith)]
 #![feature(step_by)]
 #![feature(inclusive_range, inclusive_range_syntax)]
 #![feature(unboxed_closures, fn_traits)]
@@ -515,6 +514,36 @@ mod problem22 {
     }
 }
 
+mod problem23 {
+    use ::std::collections::HashSet;
+
+    fn divisors_sum(n: usize) -> usize {
+        return (1...n / 2).filter(|x| n % x == 0).sum();
+    }
+
+    fn is_abundant(n: usize) -> bool {
+        return divisors_sum(n) > n;
+    }
+
+    pub fn solve() -> usize {
+        let limit = 28123;
+
+        let abundant_numbers: Vec<usize> = (12...limit).filter(|&n| is_abundant(n)).collect();
+        // lazy man's cartesian product
+        let possible_combinations = abundant_numbers.iter().zip(abundant_numbers.iter());
+        let possible_sums: HashSet<usize> = possible_combinations.map(|(a, b)| a + b).collect();
+        let non_summable_sum = (1...limit).filter(|x| possible_sums.contains(&x)).sum();
+
+        return non_summable_sum;
+    }
+
+    #[test]
+    fn example() {
+        let mut div_sum = ::utils::memoize(divisors_sum);
+        assert!(is_abundant(12, |n| div_sum.call(n)));
+    }
+}
+
 fn main() {
     time("Problem 1 ", || problem1::solve(1000));
 
@@ -547,6 +576,8 @@ fn main() {
     time("Problem 20", || problem20::solve(100));
 
     time("Problem 21", || problem21::solve(10000));
-    
+
     time("Problem 22", || problem22::solve());
+
+    time("Problem 23", || problem23::solve());
 }
