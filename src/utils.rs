@@ -13,7 +13,7 @@ pub fn format_duration(d: Duration) -> String {
     if d.as_secs() > 0 {
         format!("{}s {:.*}ms",
                 d.as_secs(),
-                3,
+                0,
                 d.subsec_nanos() as f64 / 1_000_000.0)
     } else if d.subsec_nanos() > 1_000_000 {
         format!("{:.*}ms", 3, d.subsec_nanos() as f64 / 1_000_000.0)
@@ -59,7 +59,10 @@ pub struct Memo<F, A, R> {
     func: F,
 }
 
-impl<F: Fn(A) -> R, A: ::std::cmp::Eq + ::std::hash::Hash + Copy, R: Copy> Memo<F, A, R> {
+impl<F: Fn(A) -> R, A, R> Memo<F, A, R>
+    where A: ::std::cmp::Eq + ::std::hash::Hash + Copy,
+          R: Copy
+{
     pub fn call(&mut self, arg: A) -> R {
         let result = match self.data.remove(&arg) {
             Some(r) => r,
