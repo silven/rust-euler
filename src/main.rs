@@ -539,8 +539,7 @@ mod problem23 {
 
     #[test]
     fn example() {
-        let mut div_sum = ::utils::memoize(divisors_sum);
-        assert!(is_abundant(12, |n| div_sum.call(n)));
+        assert!(is_abundant(12) == true);
     }
 }
 
