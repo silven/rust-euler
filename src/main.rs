@@ -547,6 +547,77 @@ mod problem23 {
     }
 }
 
+mod problem24 {
+    use itertools::Itertools;
+
+    fn state<T: Copy + ::std::fmt::Debug>(xs: &[T]) -> Vec<Vec<T>> {
+        // 1 2 3
+        // 1 3 2
+        // 2 1 3
+        // 2 3 1
+        // 3 1 2
+        // 3 2 1
+        if xs.len() == 2 {
+            return vec![
+                vec![xs[0], xs[1]],
+                vec![xs[1], xs[0]],
+            ]
+        }
+
+        let mut result: Vec<Vec<T>> = Vec::new();
+        for (idx, elem) in xs.iter().enumerate() {
+            // Messy way to get all other numbers
+            let rest = {
+                let mut tmp = if idx > 0 {
+                    xs[..idx].to_vec()
+                } else {
+                    vec![]
+                };
+
+                for x in xs[idx+1..].iter() { tmp.push(*x); }
+                tmp
+            };
+
+            for mut permutation in state(&rest) {
+                permutation.insert(0, *elem);
+                result.push(permutation);
+            }
+        }
+        return result;
+    }
+
+    fn lexical_perm(digits: &[usize]) -> Vec<String> {
+        return state(digits).iter().map(|xs| xs.into_iter().join("")).collect::<Vec<String>>();
+    }
+
+    pub fn solve(nth: usize) -> String {
+        return lexical_perm(&vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).iter().nth(nth-1).unwrap().clone();
+    }
+
+    #[test]
+    fn example() {
+        assert!(state(&vec![2, 3]) == vec![
+            vec![2, 3],
+            vec![3, 2],
+        ]);
+
+        assert!(state(&vec![1, 2, 3]) == vec![
+            vec![1, 2, 3],
+            vec![1, 3, 2],
+            vec![2, 1, 3],
+            vec![2, 3, 1],
+            vec![3, 1, 2],
+            vec![3, 2, 1],
+        ]);
+
+        let answer = vec!["012", "021", "102", "120", "201", "210"];
+        let my_answer = lexical_perm(&vec![0, 1, 2]);
+        println!("{:?} != {:?}", my_answer, answer);
+        assert!(answer == my_answer);
+
+    }
+}
+
 fn main() {
     time("Problem 1 ", || problem1::solve(1000));
 
@@ -583,4 +654,6 @@ fn main() {
     time("Problem 22", || problem22::solve());
 
     time("Problem 23", || problem23::solve());
+
+    time("Problem 24", || problem24::solve(1_000_000));
 }
