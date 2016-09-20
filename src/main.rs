@@ -30,7 +30,7 @@ mod problem1 {
 
 mod problem2 {
     pub fn solve(max_val: u64) -> u64 {
-        let fibs = ::fibonacci::generate().filter(|&n| n % 2 == 0).take_while(|&n| n < max_val);
+        let fibs = ::fibonacci::generate::<u64>().filter(|&n| n % 2 == 0).take_while(|&n| n < max_val);
         return fibs.sum();
     }
 }
@@ -618,6 +618,29 @@ mod problem24 {
     }
 }
 
+mod problem25 {
+    use ::num::bigint::{BigUint, ToBigUint};
+
+    fn index_for_fib_of_at_least(min_value: BigUint) -> usize {
+        let min = min_value.to_biguint().unwrap();
+        let idx_fibs = (2..).zip(::fibonacci::generate::<BigUint>());
+        return idx_fibs.skip_while(|&(_, ref n)| n < &min).map(|(idx, _)| idx).next().unwrap();
+    }
+
+    pub fn solve(n_digits: usize) -> usize {
+        let min_val = ::num::pow(10.to_biguint().unwrap(), n_digits-1);
+        return index_for_fib_of_at_least(min_val);
+    }
+
+    #[test]
+    fn test_example() {
+        let fib_idx = index_for_fib_of_at_least(100.to_biguint().unwrap());
+        assert_eq!(fib_idx, 12);
+    }
+
+
+}
+
 fn main() {
     time("Problem 1 ", || problem1::solve(1000));
 
@@ -656,4 +679,6 @@ fn main() {
     time("Problem 23", || problem23::solve());
 
     time("Problem 24", || problem24::solve(1_000_000));
+
+    time("Problem 25", || problem25::solve(1000));
 }
