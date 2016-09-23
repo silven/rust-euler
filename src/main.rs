@@ -641,17 +641,20 @@ mod problem25 {
 
 
 mod problem27 {
-    fn seq_of_primes<F: Fn(i64)->i64>(generator: F) -> usize {
-        return (0..).take_while(|&n| ::primes::is_prime(generator(n).abs())).count();
+    fn seq_of_primes<F, C>(generator: F, mut check: C) -> usize
+        where F: Fn(i64)->i64,
+              C: FnMut(i64)->bool,
+    {
+        return (0..).take_while(|&n| check(generator(n).abs())).count();
     }
 
     pub fn solve() -> i64 {
+        let mut memo_is_prime = ::utils::memoize(::primes::is_prime);
         let mut longest_yet = 0;
         let mut coefs = (0, 0);
         for a in -999...999 {
             for b in -1000...1000 {
-                let seq = seq_of_primes(|n| n*n + a*n + b);
-                //println!("a={}, b={} yeilded a seq of {} primes", a, b, seq);
+                let seq = seq_of_primes(|n| n*n + a*n + b, |x| memo_is_prime.call(x));
                 if seq > longest_yet {
                     coefs = (a, b);
                     longest_yet = seq;
@@ -663,7 +666,8 @@ mod problem27 {
 
     #[test]
     fn first_example() {
-        assert_eq!(seq_of_primes(|n| n*n + n + 41),      40);
+        let mut memo_is_prime = ::utils::memoize(::primes::is_prime);
+        assert_eq!(seq_of_primes(|n| n*n + n + 41, |x| memo_is_prime.call(x)),      40);
     }
 
     #[test]
