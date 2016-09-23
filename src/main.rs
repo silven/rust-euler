@@ -1,4 +1,4 @@
-#![feature(step_by)]
+#![feature(step_by, step_trait)]
 #![feature(inclusive_range, inclusive_range_syntax)]
 #![feature(unboxed_closures, fn_traits)]
 
@@ -637,7 +637,39 @@ mod problem25 {
         let fib_idx = index_for_fib_of_at_least(100.to_biguint().unwrap());
         assert_eq!(fib_idx, 12);
     }
+}
 
+
+mod problem27 {
+    fn seq_of_primes<F: Fn(i64)->i64>(generator: F) -> usize {
+        return (0..).take_while(|&n| ::primes::is_prime(generator(n).abs())).count();
+    }
+
+    pub fn solve() -> i64 {
+        let mut longest_yet = 0;
+        let mut coefs = (0, 0);
+        for a in -999...999 {
+            for b in -1000...1000 {
+                let seq = seq_of_primes(|n| n*n + a*n + b);
+                //println!("a={}, b={} yeilded a seq of {} primes", a, b, seq);
+                if seq > longest_yet {
+                    coefs = (a, b);
+                    longest_yet = seq;
+                }
+            }
+        }
+        return coefs.0 * coefs.1;
+    }
+
+    #[test]
+    fn first_example() {
+        assert_eq!(seq_of_primes(|n| n*n + n + 41),      40);
+    }
+
+    #[test]
+    fn second_example() {
+        assert_eq!(seq_of_primes(|n| n*n - 79*n + 1601), 80);
+    }
 
 }
 
@@ -681,4 +713,6 @@ fn main() {
     time("Problem 24", || problem24::solve(1_000_000));
 
     time("Problem 25", || problem25::solve(1000));
+
+    time("Problem 27", || problem27::solve());
 }

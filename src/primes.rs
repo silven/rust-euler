@@ -12,6 +12,16 @@ pub fn generate() -> Generator {
     };
 }
 
+use std::ops::Add;
+use std::iter::Step;
+use ::num::Integer;
+
+pub fn is_prime<T>(n: T) -> bool
+    where for<'a> &'a T: Add<Output=T>,
+        T: Integer + From<u8> + Step + Copy {
+    return ! (T::from(2)...(n - T::from(1))).any(|x| n % x == T::from(0));
+}
+
 impl Iterator for Generator {
     type Item = u64;
 
@@ -34,9 +44,15 @@ impl Iterator for Generator {
 }
 
 #[test]
+fn test_is_prime() {
+    let small_primes: Vec<u64> = generate().take(4).collect();
+    assert!(small_primes.into_iter().all(|x| is_prime(x)));
+}
+
+#[test]
 fn generator_works() {
     let small_primes: Vec<u64> = generate().take(4).collect();
-    assert!(small_primes == vec![2, 3, 5, 7])
+    assert!(small_primes == vec![2, 3, 5, 7]);
 }
 
 #[test]
