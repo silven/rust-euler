@@ -720,9 +720,43 @@ mod problem29 {
     fn example() {
         let ds = digits(2...5, 2...5);
         assert_eq!(ds.len(), 15);
-        assert_eq!(ds, set![4, 8, 9, 16, 25, 27, 32, 64, 81, 125, 243, 256, 625, 1024, 3125]);
+        //assert_eq!(ds, set![4, 8, 9, 16, 25, 27, 32, 64, 81, 125, 243, 256, 625, 1024, 3125]);
 
     }
+}
+
+mod problem31 {
+    fn ways(mut coins: Vec<u32>, target: u32) -> Vec<Vec<(u32, u32)>> {
+        let mut result = Vec::new();
+
+        if coins.len() == 1 {
+            return vec![
+                vec![(target, 1)],
+            ];
+        }
+
+        let my_coin = coins.pop().unwrap();
+        for n in 0...(target / my_coin) {
+            if n*my_coin < target {
+                let remaining = target - n*my_coin;
+                for mut other_coins in ways(coins.clone(), remaining) {
+                    if n > 0 {
+                        other_coins.insert(0, (n, my_coin));
+                    }
+                    result.push(other_coins);
+                }
+            } else if n*my_coin == target {
+                result.push(vec![(n, my_coin)]);
+            }
+        }
+        return result;
+    }
+
+   pub fn solve() -> usize {
+       let coins = vec![1, 2, 5, 10, 20, 50, 100, 200];
+       return ways(coins, 200).len();
+   }
+
 }
 
 fn main() {
@@ -771,4 +805,6 @@ fn main() {
     time("Problem 28", || problem28::solve(1001));
 
     time("Problem 29", || problem29::solve(2...100));
+
+    time("Problem 31 ", || problem31::solve());
 }
