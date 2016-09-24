@@ -2,6 +2,20 @@ use std::collections::HashMap;
 use std::fmt::Display;
 use std::time::{Duration, Instant};
 
+
+macro_rules! set {
+    ( $( $x:expr ),* ) => {
+        {
+            let mut temp_set = HashSet::new();
+            $(
+                temp_set.insert($x);
+            )*
+            temp_set
+        }
+    };
+}
+
+
 pub fn time<F: FnOnce() -> A, A: Display>(name: &str, func: F) {
     let start = Instant::now();
     let answer = func();

@@ -7,6 +7,8 @@ extern crate itertools;
 
 mod primes;
 mod fibonacci;
+
+#[macro_use]
 mod utils;
 
 use utils::time;
@@ -697,7 +699,30 @@ mod problem28 {
         assert_eq!(ring_corners(1), 9+7+5+3);
         assert_eq!(sum_until(1), 9+7+5+3 + 1);
     }
+}
 
+mod problem29 {
+    use itertools::Itertools;
+    use std::ops::RangeInclusive;
+    use std::collections::HashSet;
+    use num::bigint::{BigUint, ToBigUint};
+
+    fn digits(bases: RangeInclusive<u64>, pows: RangeInclusive<u64>) -> HashSet<BigUint> {
+        return bases.map(|a|a.to_biguint().unwrap()).cartesian_product(pows).map(|(a, b)|
+            ::num::pow(a, b as usize)).collect::<HashSet<BigUint>>();
+    }
+
+    pub fn solve(r: RangeInclusive<u64>) -> usize {
+        return digits(r.clone(), r).len();
+    }
+
+    #[test]
+    fn example() {
+        let ds = digits(2...5, 2...5);
+        assert_eq!(ds.len(), 15);
+        assert_eq!(ds, set![4, 8, 9, 16, 25, 27, 32, 64, 81, 125, 243, 256, 625, 1024, 3125]);
+
+    }
 }
 
 fn main() {
@@ -744,4 +769,6 @@ fn main() {
     time("Problem 27", || problem27::solve());
 
     time("Problem 28", || problem28::solve(1001));
+
+    time("Problem 29", || problem29::solve(2...100));
 }
