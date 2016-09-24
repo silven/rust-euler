@@ -566,15 +566,9 @@ mod problem24 {
 
         let mut result: Vec<Vec<T>> = Vec::new();
         for (idx, elem) in xs.iter().enumerate() {
-            // Messy way to get all other numbers
             let rest = {
-                let mut tmp = if idx > 0 {
-                    xs[..idx].to_vec()
-                } else {
-                    vec![]
-                };
-
-                for x in xs[idx+1..].iter() { tmp.push(*x); }
+                let mut tmp = xs.to_vec();
+                tmp.remove(idx);
                 tmp
             };
 
@@ -665,14 +659,43 @@ mod problem27 {
     }
 
     #[test]
-    fn first_example() {
+    fn examples() {
         let mut memo_is_prime = ::utils::memoize(::primes::is_prime);
-        assert_eq!(seq_of_primes(|n| n*n + n + 41, |x| memo_is_prime.call(x)),      40);
+        assert_eq!(seq_of_primes(|n| n*n + n + 41,      |x| memo_is_prime.call(x)), 40);
+        assert_eq!(seq_of_primes(|n| n*n - 79*n + 1601, |x| memo_is_prime.call(x)), 80);
+    }
+}
+
+mod problem28 {
+    fn ring_corners(n: usize) -> usize {
+        if n == 0 {
+            return 1;
+        }
+        // ring n = 1
+        // 7 8 9
+        // 6   2
+        // 5 4 3
+        //
+        // x = (2*n+1)^2
+        // sum = x + (x - 2n) + (x - 4n) + (x - 6n)
+        // => f(n) = 4(2n+1)^2 – 12n
+        return 4*(n*2+1).pow(2) - 12*n;
+    }
+
+    fn sum_until(ring: usize) -> usize {
+        return (0...ring).map(ring_corners).sum();
+    }
+
+    pub fn solve(size: usize) -> usize {
+        let n_rings = (size-1)/2;
+        return sum_until(n_rings);
     }
 
     #[test]
-    fn second_example() {
-        assert_eq!(seq_of_primes(|n| n*n - 79*n + 1601), 80);
+    fn first_ring() {
+        assert_eq!(ring_corners(0), 1);
+        assert_eq!(ring_corners(1), 9+7+5+3);
+        assert_eq!(sum_until(1), 9+7+5+3 + 1);
     }
 
 }
@@ -719,4 +742,6 @@ fn main() {
     time("Problem 25", || problem25::solve(1000));
 
     time("Problem 27", || problem27::solve());
+
+    time("Problem 28", || problem28::solve(1001));
 }
