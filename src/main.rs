@@ -759,6 +759,49 @@ mod problem31 {
 
 }
 
+mod problem35 {
+    use std::collections::HashSet;
+
+    fn digits_to_int(ds: &Vec<u64>) -> u64 {
+        let mut result = 0;
+        for &d in ds {
+            result *= 10;
+            result += d;
+        }
+        return result;
+    }
+
+    fn rotations_of(n: u64) -> Vec<u64> {
+        let mut digits = ::utils::int_to_digits(n);
+        let mut results = vec![digits.clone()];
+        for _ in 1..digits.len() {
+            let last = digits.pop().unwrap();
+            digits.insert(0, last);
+            results.push(digits.clone());
+        }
+        return results.iter().map(digits_to_int).collect::<Vec<u64>>();
+
+    }
+
+    fn is_circular(prime: u64, known_primes: &HashSet<u64>) -> bool {
+        return rotations_of(prime).into_iter().all(|rot| known_primes.contains(&rot));
+    }
+
+    pub fn solve(limit: u64) -> usize {
+        let ps = ::primes::generate().take_while(|&n| n < limit).collect::<HashSet<u64>>();
+        let circular = ps.iter().filter(|&p| is_circular(*p, &ps));
+        return circular.count();
+    }
+
+    #[test]
+    fn example_197() {
+        let primes = ::primes::generate().take_while(|&n| n < 1000).collect::<HashSet<u64>>();
+        assert_eq!(rotations_of(197), vec![197, 719, 971]);
+        assert!(is_circular(197, &primes));
+    }
+
+}
+
 fn main() {
     time("Problem 1 ", || problem1::solve(1000));
 
@@ -807,4 +850,6 @@ fn main() {
     time("Problem 29", || problem29::solve(2...100));
 
     time("Problem 31 ", || problem31::solve());
+
+    time("Problem 35", || problem35::solve(1_000_000));
 }
